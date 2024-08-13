@@ -9,6 +9,8 @@ How to try it out:
 
 Download the `floppy.img` file from the released downloads, create a new virtual machine with a floppy drive, and mount the image file as that floppy drive. Boot the VM and have fun! 
 
+Left paddle movement: Q/A
+Right paddle movement: O/L
 
 How to build:
 =============
