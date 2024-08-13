@@ -151,6 +151,8 @@ size equ	$ - main
 %endif
 times	(512 - size - 2) db 0
 	
-db	0xaa, 0x55		;2  byte boot signature
+; The last two words (check `xxd bootloader.bin` should be 55aa; the old
+; `db 0xaa, 0x55` for some reason resulted in inverting that to aa55.	
+dw	0xaa55		;2  byte boot signature
 
 ;db	"abcdefghijklmnopqrstuvwxyz0123456789-This is our test data from the disk"
