@@ -1122,8 +1122,8 @@ ballCurX dw 160
 ballNX dw 160
 ballCurY dw 100
 ballNY dw 100
-ballDX dw 3	; delta-x
-ballDY dw 3	; delta-y
+ballDX dw 5	; delta-x
+ballDY dw 5	; delta-y
 ;ballDiameter dw 3
 ; paddles start at the top and outside of the screen
 paddleLCurX dw 2	; This is the inside of the paddle, never changes
@@ -1132,16 +1132,16 @@ paddleLNY dw 0
 paddleRCurX dw 317	; This is the inside of the paddle, never changes
 paddleRCurY dw 0
 paddleRNY dw 0
-paddleDY dw 4	; delta-x (same for both paddles)
+paddleDY dw 6	; delta-x (same for both paddles)
 
 ;		Graphics variables declarations
 paddleXSize dw 3
-paddleYSize dw 21
-paddleLeftBMP db 19,19,17,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,19,19,17
-paddleRightBMP db 17,19,19,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,17,19,19
-ballXSize dw 3
-ballYSize dw 3
-ballBMP db 9,15,9,15,15,15,9,15,9
+paddleYSize dw 31
+paddleLeftBMP db 19,19,17,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,19,19,17
+paddleRightBMP db 17,19,19,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,19,6,6,17,19,19
+ballXSize dw 4
+ballYSize dw 4
+ballBMP db 9,11,11,9,11,15,15,11,11,15,15,11,9,11,11,9
 
 ;		Miscellaneous variables
 beginGameClockTicks dw 0
