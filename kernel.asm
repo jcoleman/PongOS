@@ -24,11 +24,11 @@ main:
 	call SetupISRs
 	call SetupKeyboard
 	
-	.mainLoop
+	.mainLoop:
 		call NewGame
 		loop .mainLoop
 		
-	.endLoop
+	.endLoop:
 		hlt
 		jmp .endLoop
 
@@ -114,7 +114,7 @@ TimerISR:
 	call CheckBallCollisions
 	call MovePaddles
 	
-	.isPaused	; Don't move anything
+	.isPaused:	; Don't move anything
 	;mov al, 20h
 	;out 20h, al	; acknowledge end of interrupt to PIC - Shouldn't be necessary on this int, because it is software called
 	
@@ -147,52 +147,52 @@ KeypressISR:
 	mov bl, 0feh	; flag for key up (use and to disable a single bit)
 	and al, 01111111b	; get actual scan code for key released
 	
-	.HandleKeyUp
+	.HandleKeyUp:
 	cmp al, 1eh
 	jne .LeftPaddleUp
 		rol bl, 1; Left Paddle Down - bit 1
 		and [kbdKeyFlags], bl
-	.LeftPaddleUp
+	.LeftPaddleUp:
 	cmp al, 10h
 	jne .RightPaddleDown
 		and [kbdKeyFlags], bl; Left Paddle Up - bit 0
-	.RightPaddleDown
+	.RightPaddleDown:
 	cmp al, 26h
 	jne .RightPaddleUp
 		rol bl, 3; Right Paddle Down - bit 3
 		and [kbdKeyFlags], bl
-	.RightPaddleUp
+	.RightPaddleUp:
 	cmp al, 18h
 	jne .EndKBDCode	; unused key
 		rol bl, 2; Right Paddle Up - bit 2
 		and [kbdKeyFlags], bl
 	jmp .EndKBDCode
 	
-	.HandleKeyDown
+	.HandleKeyDown:
 	cmp al, 1eh
 	jne .LeftPaddleUpD
 		shl bl, 1	; Left Paddle Down - bit 1
 		or [kbdKeyFlags], bl
 		jmp .OtherKeyChecks
-	.LeftPaddleUpD
+	.LeftPaddleUpD:
 	cmp al, 10h
 	jne .RightPaddleDownD
 		or [kbdKeyFlags], bl	; Left Paddle Up - bit 0
 		jmp .OtherKeyChecks
-	.RightPaddleDownD
+	.RightPaddleDownD:
 	cmp al, 26h
 	jne .RightPaddleUpD
 		shl bl, 3	; Right Paddle Down - bit 3
 		or [kbdKeyFlags], bl
 		jmp .OtherKeyChecks
-	.RightPaddleUpD
+	.RightPaddleUpD:
 	cmp al, 18h
 	jne .OtherKeyChecks	; not a paddle movement key
 		shl bl, 2	; Right Paddle Up - bit 2
 		or [kbdKeyFlags], bl
 		; fall through to .OtherKeyChecks on purpose
 		
-	.OtherKeyChecks
+	.OtherKeyChecks:
 	cmp al, 39h
 	jne .EndKBDCode
 		shl bl, 4	; Spacebar was pressed - bit 4
@@ -202,7 +202,7 @@ KeypressISR:
 		mov [beginGameClockTicks], ax
 		pop dx
 	
-	.EndKBDCode
+	.EndKBDCode:
 	in al, 61h	; get current control byte
 	or al, 80h	; set the enable bit to ackowledge reading of the keyboard
 	out 61h, al
@@ -309,7 +309,7 @@ SetupGame:
 	cmp dl, 3
 	je .setBallAngle1	; +,-
 	
-	.setBallAngle1
+	.setBallAngle1:
 	mov ax, 1
 	cmp dl, 0
 	je .setBallAngle2	; +,+
@@ -323,7 +323,7 @@ SetupGame:
 	cmp dl, 3
 	je .setBallAngle2	; +,-
 	
-	.setBallAngle2
+	.setBallAngle2:
 	cmp dl, 0
 	je .setBallDir	; +,+
 	neg ax
@@ -336,7 +336,7 @@ SetupGame:
 	cmp dl, 3
 	je .setBallDir	; +,-
 	
-	.setBallDir
+	.setBallDir:
 	pop dx
 	mov word [ballDX], ax
 	mov word [ballDY], bx
@@ -349,7 +349,7 @@ SetupGame:
 ; Requires: AX
 ; Written by: James Coleman
 PlayGame:
-	.gameLoop	; mainly needs to handle drawing the screen
+	.gameLoop:	; mainly needs to handle drawing the screen
 		sti
 		call RedrawBall
 		call RedrawRightPaddle
@@ -390,28 +390,28 @@ MovePaddles:
 	sub cx, [paddleYSize]	; offset the largest Y by the size of the paddle
 	mov di, [topWallY]
 	
-	.MLeftPaddleUp
+	.MLeftPaddleUp:
 	shr bl, 1
 	jnc .MLeftPaddleDown
 		add [paddleLNY], dx
 		cmp word [paddleLNY], di
 		ja .MLeftPaddleDown
 		mov word [paddleLNY], di
-	.MLeftPaddleDown
+	.MLeftPaddleDown:
 	shr bl, 1
 	jnc .MRightPaddleUp
 		add [paddleLNY], ax
 		cmp [paddleLNY], cx
 		jna .MRightPaddleUp
 		mov [paddleLNY], cx
-	.MRightPaddleUp
+	.MRightPaddleUp:
 	shr bl, 1
 	jnc .MRightPaddleDown
 		add [paddleRNY], dx
 		cmp word [paddleRNY], di
 		ja .MRightPaddleDown
 		mov word [paddleRNY], di
-	.MRightPaddleDown
+	.MRightPaddleDown:
 	shr bl, 1
 	jnc	.EndMovePaddles
 		add [paddleRNY], ax
@@ -419,7 +419,7 @@ MovePaddles:
 		jna .EndMovePaddles
 		mov [paddleRNY], cx
 		
-	.EndMovePaddles
+	.EndMovePaddles:
 	ret
 
 ; Function: Displays the status of the current paddle control keys flags
@@ -446,32 +446,32 @@ DisplayKeyFlags:
 	mov bh, 0
 	
 	mov bl, [kbdKeyFlags]	; setup for switch cases
-	.LUp
+	.LUp:
 	shr bl, 1
 	jnc .LDn
 		mov bh, 15
-	.LDn
+	.LDn:
 		mov di, 158
 		call PutPixel
 		xor bh, bh
 	shr bl, 1
 	jnc .RUp
 		mov bh, 15
-	.RUp
+	.RUp:
 	mov di, 159
 	call PutPixel
 	xor bh, bh
 	shr bl, 1
 	jnc .RDn
 		mov bh, 15
-	.RDn
+	.RDn:
 		mov di, 160
 		call PutPixel
 		xor bh, bh
 	shr bl, 1
 	jnc	.endDispKFlags
 		mov bh, 15
-	.endDispKFlags
+	.endDispKFlags:
 		mov di, 161
 		call PutPixel
 	ret
@@ -501,7 +501,7 @@ RedrawLeftScore:
 	mov cx, 0
 	mov bl, 4
 	call PutHexNumber	; draw current score
-	.endRedrawScoreLeft
+	.endRedrawScoreLeft:
 	ret
 
 ; Function: Draws the current score onto the screen
@@ -525,7 +525,7 @@ RedrawRightScore:
 	mov cx, 0
 	mov bl, 4
 	call PutHexNumber	; draw current score
-	.endRedrawScoreRight
+	.endRedrawScoreRight:
 	ret
 
 ; Function: Erases old ball and draws it in its new location on the screen
@@ -544,7 +544,7 @@ RedrawBall:	; Note any access to the N coordinate vars needs to be locked from i
 	cmp si, [ballNY]
 	je .drawBall	; neither X nor Y has changed
 	sti
-	.needBallErase
+	.needBallErase:
 	push word [ballXSize]
 	push word [ballYSize]
 	push di	; X-Coord
@@ -553,7 +553,7 @@ RedrawBall:	; Note any access to the N coordinate vars needs to be locked from i
 	call PutRect
 	
 	; redraw at current pos
-	.drawBall
+	.drawBall:
 	cli
 	mov bx, [ballNX]	; set cur coords equal to new coords
 	mov ax, [ballNY]
@@ -589,7 +589,7 @@ CheckBallCollisions:
 	call CheckRightWallCollision
 	cmp ax, 0
 	jne .collisionRight
-	.walls
+	.walls:
 	call CheckTopWallCollision
 	cmp ax, 0
 	jne .done	; collided (don't check other wall)
@@ -599,15 +599,15 @@ CheckBallCollisions:
 	mov ax, [bottomWallY]
 	sub ax, [ballYSize]
 	mov [ballNY], ax
-	.done
+	.done:
 	pop word ax
 	ret
-	.collisionLeft
+	.collisionLeft:
 	inc word [rightScore]
 	jmp .endGameCollision
-	.collisionRight
+	.collisionRight:
 	inc word [leftScore]
-	.endGameCollision
+	.endGameCollision:
 	pop word ax
 	or byte [gameOver], 1
 	ret
@@ -641,7 +641,7 @@ CheckLeftPaddleCollision:
 	pop word si
 	or ax, 1
 	ret
-	.exit0
+	.exit0:
 	xor ax, ax
 	ret
 	
@@ -673,7 +673,7 @@ CheckRightPaddleCollision:
 	pop word si
 	or ax, 1
 	ret
-	.exit0
+	.exit0:
 	xor ax, ax
 	ret
 	
@@ -695,7 +695,7 @@ CheckTopWallCollision:
 	pop word si
 	or ax, 1
 	ret
-	.exit0TW
+	.exit0TW:
 	xor ax, ax
 	ret
 
@@ -718,7 +718,7 @@ CheckBottomWallCollision:
 	pop word si
 	or ax, 1
 	ret
-	.exit0BW
+	.exit0BW:
 	xor ax, ax
 	ret
 	
@@ -733,7 +733,7 @@ CheckLeftWallCollision:
 	jl .exit0LW
 	or ax, 1
 	ret
-	.exit0LW
+	.exit0LW:
 	xor ax, ax
 	ret
 	
@@ -749,7 +749,7 @@ CheckRightWallCollision:
 	jl .exit0RW
 	or ax, 1
 	ret
-	.exit0RW
+	.exit0RW:
 	xor ax, ax
 	ret
 	
@@ -796,14 +796,14 @@ RedrawRightPaddle:
 	; else = negative difference -> paddle moved up on the screen
 	add ax, [paddleYSize]
 	sub ax, dx
-	.paddleRMovedDown
+	.paddleRMovedDown:
 	push ax	; CurY (which is becoming the old Y value)
 	mov bh, 0
 	call PutRect
 
 	; set current location equal to the new location
 	mov [paddleRCurY], cx
-	.noChgRightPaddleY
+	.noChgRightPaddleY:
 	ret
 
 ; Function: Erases old paddles and draws them in their new locations on the screen
@@ -834,14 +834,14 @@ RedrawLeftPaddle:
 	jns .paddleLMovedDown	; true = positive distance
 	add ax, [paddleYSize]	; else = negative difference -> paddle moved up on the screen
 	sub ax, dx
-	.paddleLMovedDown
+	.paddleLMovedDown:
 	push ax	; CurY (which is becoming the old Y value)
 	mov bh, 0
 	call PutRect
 	
 	; set current location equal to the new location
 	mov [paddleLCurY], cx
-	.noChgLeftPaddleY
+	.noChgLeftPaddleY:
 	ret
 
 ; Function: Draw a pixel on the screen
@@ -856,7 +856,7 @@ PutPixel:
 	mul si	; result in ax
 	add di, ax
 	mov [es:di], bh
-	.endPutPixel
+	.endPutPixel:
 	ret
 
 ; Function: Draw a bitmap array to the screen
@@ -881,11 +881,11 @@ PutRect:
 
 	mov dx, [bp + 8]	; get Y-size
 	xor si, si	; zero out for counting loop
-	.drawRectLoop
+	.drawRectLoop:
 		mov cx, [bp + 10]	; get X-size from stack
-		.rowRectLoop
+		.rowRectLoop:
 			mov [es:di], bh
-			.endRowRectLoop
+			.endRowRectLoop:
 			inc di
 			loop .rowRectLoop	; loop through the columns in each row
 		add di, [curRectRowOffset]	; move to next row in video memory
@@ -921,14 +921,14 @@ PutBMP:
 	
 	mov dx, [bp + 8]	; get Y-size
 	xor bx, bx	; zero out for counting loop
-	.drawBMPLoop
+	.drawBMPLoop:
 		mov cx, [bp + 10]	; get X-size from stack
-		.rowBMPLoop
+		.rowBMPLoop:
 			mov ah, [si]
 			cmp ah, 255
 			je .endRowBMPLoop	; transparent pixel
 			mov [es:di], ah
-			.endRowBMPLoop
+			.endRowBMPLoop:
 			inc si
 			inc di
 			loop .rowBMPLoop	; loop through the columns in each row
@@ -936,7 +936,7 @@ PutBMP:
 		inc bx
 		cmp bx, dx
 		jb .drawBMPLoop	; loop through the rows (Y-size)
-	.DontDraw
+	.DontDraw:
 	
 	pop ax
 	pop cx
@@ -956,38 +956,38 @@ PutChar:
 	mov di, 60
 	cmp al, 'A'
 	jae .putLetter
-	.putNumber
+	.putNumber:
 	sub al, '0'
 	add al, 26
 	jmp .getFontAddress
-	.putLetter
+	.putLetter:
 	sub al, 'A'
 	
-	.getFontAddress
+	.getFontAddress:
 	push dx
 	mul di
 	pop dx
 	lea si, [pongFont]
 	add si, ax
 	
-	.getCharColor
+	.getCharColor:
 	cmp bl, 255
 	je .drawChar
 	push si
 	push cx
 	mov cx, 60
-	.setCharColor
+	.setCharColor:
 		mov bh, [si]
 		cmp bh, 255
 		je .noChgCharColor
 		mov byte [si], bl
-		.noChgCharColor
+		.noChgCharColor:
 		inc si
 		loop .setCharColor
 	pop cx
 	pop si
 	
-	.drawChar
+	.drawChar:
 	push word 6
 	push word 10
 	push dx
@@ -1005,7 +1005,7 @@ PutChar:
 PutString:
 	mov [stringX], dx
 	mov [stringY], cx
-	.stringCharLoop
+	.stringCharLoop:
 		mov dx, [stringX]
 		mov cx, [stringY]
 		mov al, [si]
@@ -1014,11 +1014,11 @@ PutString:
 		cmp al, ' '
 		je .stringSpace
 		call PutChar
-		.stringSpace
+		.stringSpace:
 		inc si
 		add word [stringX], 6
 		jmp .stringCharLoop
-	.endPutString
+	.endPutString:
 	ret
 	stringX dw 0
 	stringY dw 0
@@ -1035,7 +1035,7 @@ PutHexNumber:
 	
 	lea si, [digitString]
 	mov cx, 4
-	.resetHexString
+	.resetHexString:
 		mov byte [si], '0'
 		inc si
 		loop .resetHexString
@@ -1044,7 +1044,7 @@ PutHexNumber:
 	add si, 3	; start at the end of the string
 	mov bx, 16	; setup for divides in conversion loop
 	mov cx, 4	; max of 4 hex digits in a 16-bit number
-	.convertHexStringLoop
+	.convertHexStringLoop:
 		xor dx, dx
 		div bx
 		call GetHexChar
@@ -1065,7 +1065,7 @@ PutHexNumber:
 	;	jmp .findFirstHexDigit
 	
 	pop dx
-	.putHexString
+	.putHexString:
 	;mov ax, 4
 	;sub ax, cx	; compute digit offset
 	;mov cx, 6	; convert that to pixel offset
@@ -1076,7 +1076,7 @@ PutHexNumber:
 	pop bx
 	call PutString
 	
-	.endPutHexNum
+	.endPutHexNum:
 	ret
 	digitString db "0000", 0
 	
@@ -1091,10 +1091,10 @@ GetHexChar:
 	ja .hexLetter
 	add dl, '0'
 	jmp .endGetHexChar
-	.hexLetter
+	.hexLetter:
 	sub dl, 10
 	add dl, 'A'
-	.endGetHexChar
+	.endGetHexChar:
 	ret
 
 ; DEBUG METHOD - Can place in code to get a visual display of how far the program has progressed before a bug occurs

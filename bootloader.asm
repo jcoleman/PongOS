@@ -60,7 +60,7 @@ main:
 	;mov bx, 7e00h
 	;jmp bx
 		
-	.ploop
+	.ploop:
 	jmp .ploop
 
 
@@ -99,16 +99,16 @@ SetCursPos:
 	cmp byte [cursX], 80
 	je .resetX
 	jmp .cursYCheck
-	.resetX
+	.resetX:
 	inc byte [cursY]	; drop down one line
 	mov byte [cursX], 0	; go to the beginning of the line
-	.cursYCheck
+	.cursYCheck:
 	cmp byte [cursY], 25
 	je .resetY
 	jmp .endSetCursPos
-	.resetY
+	.resetY:
 	mov byte [cursY], 0
-	.endSetCursPos
+	.endSetCursPos:
 	ret
 	
 HexChar:
@@ -116,10 +116,10 @@ HexChar:
 	jae .HexLetter	; is the char 1-9 or A->
 	add dl, 30h
 	jmp .endHexChar
-	.HexLetter
+	.HexLetter:
 		sub dl, 10
 		add dl, 'A'
-	.endHexChar
+	.endHexChar:
 	ret
 
 ; Function: Writes a two-digit hex number to the screen
