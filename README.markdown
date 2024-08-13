@@ -12,6 +12,20 @@ Download the `floppy.img` file from the released downloads, create a new virtual
 Left paddle movement: Q/A
 Right paddle movement: O/L
 
+Using QEMU:
+==========
+
+One macOS:
+
+```
+brew install qemu
+qemu-system-i386 -fda floppy.img
+```
+
+QEMU fullscreen notes:
+- Uncapture mouse cursor: ctrl+opt+g
+- Exit fullscreen: cmd+f
+
 How to build:
 =============
 Building is accomplished by running the `buildPong.sh` file. NASM is required, as is the unix utility `dd`. The two asm source files are compiled separately and then combined together to make the floppy image file.
